@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CvModule } from './cv/cv.module';
@@ -8,19 +9,32 @@ import { SkillModule } from './skill/skill.module';
 import { Cv } from './cv/entities/cv.entity';
 import { User } from './user/entities/user.entity';
 import { Skill } from './skill/entities/skill.entity';
+import { DatabaseType, DataSourceOptions } from 'typeorm';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres', // or your chosen DB
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',  // update as needed
-      password: 'password',  // update as needed
-      database: 'cvs_db',    // update as needed
-      entities: [Cv, User, Skill],
-      synchronize: true,     // no idea chta3mel hedhi
+    ConfigModule.forRoot({
+      isGlobal: true,
     }),
+
+    TypeOrmModule.forRootAsync({
+      useFactory: (configService: ConfigService) => {
+        const dbType = configService.get<string>('DB_TYPE');
+
+        return {
+          type: dbType as DatabaseType, 
+          host: configService.get<string>('DB_HOST'),
+          port: configService.get<number>('DB_PORT'),
+          username: configService.get<string>('DB_USERNAME'),
+          password: configService.get<string>('DB_PASSWORD'),
+          database: configService.get<string>('DB_NAME'),
+          entities: [Cv, User, Skill],
+          synchronize: true,
+        } as DataSourceOptions;
+      },
+      inject: [ConfigService],
+    }),
+
     CvModule,
     UserModule,
     SkillModule,
