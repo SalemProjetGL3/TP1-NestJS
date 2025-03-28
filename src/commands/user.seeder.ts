@@ -13,9 +13,11 @@ async function bootstrap() {
 
   for (let i = 0; i < 10; i++) {
     await userService.create({
-        username: randUserName(),
-        email: randEmail(),
-        password: randPassword(),
+      username: randUserName(),
+      email: randEmail(),
+      password: randPassword().join(''),
+      role: '',
+
     });
   }
 

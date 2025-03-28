@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CvModule } from './cv/cv.module';
+import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { SkillModule } from './skill/skill.module';
 import { Cv } from './cv/entities/cv.entity';
@@ -38,6 +39,7 @@ import { DatabaseType, DataSourceOptions } from 'typeorm';
     CvModule,
     UserModule,
     SkillModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

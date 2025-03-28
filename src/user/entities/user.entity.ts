@@ -1,21 +1,31 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Cv } from '../../cv/entities/cv.entity';
+import { Cv } from 'src/cv/entities/cv.entity';
+import { UserRoleEnum } from 'src/enums/user-role.enum';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
-@Entity()
+@Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   username: string;
-
-  @Column()
-  email: string;
 
   @Column()
   password: string;
 
-  // One-to-Many: a user can have many CVs
+  @Column()
+  salt: string;
+
+  @Column({ unique: true })
+  email: string;
+
+  @Column({
+    type: 'enum',
+    enum: UserRoleEnum,
+    default: UserRoleEnum.USER
+  })
+  role: string;
+
   @OneToMany(() => Cv, (cv) => cv.user)
   cvs: Cv[];
 }
