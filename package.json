@@ -18,9 +18,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "seed:users": "ts-node src/commands/user.seeder.ts",
     "seed:skills": "ts-node src/commands/skill.seeder.ts",
     "seed:cvs": "ts-node src/commands/cv.seeder.ts",
-    "seed:users": "ts-node src/commands/user.seeder.ts"
+    "seed:db": "ts-node src/commands/db.seeder.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -35,6 +36,8 @@
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "config": "^3.3.12",
+    "crypto": "^1.0.1",
     "mysql2": "^3.14.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
