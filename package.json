@@ -21,7 +21,7 @@
     "seed:users": "ts-node src/commands/user.seeder.ts",
     "seed:skills": "ts-node src/commands/skill.seeder.ts",
     "seed:cvs": "ts-node src/commands/cv.seeder.ts",
-    "seed:db": "ts-node src/commands/db.seeder.ts"
+    "seed:db": "ts-node -r tsconfig-paths/register src/commands/db.seeder.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -38,6 +38,7 @@
     "class-validator": "^0.14.1",
     "config": "^3.3.12",
     "crypto": "^1.0.1",
+    "lodash": "^4.17.21",
     "mysql2": "^3.14.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",

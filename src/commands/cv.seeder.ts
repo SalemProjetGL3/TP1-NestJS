@@ -19,7 +19,7 @@ async function bootstrap() {
       cin: randNumber({ length: 8 }).toString(), // Generates an 8-digit numeric string
       job: randJobTitle(),
       path: randFilePath(),
-    });
+    }, { id: i + 1, username: `user${i + 1}` }); // Pass a mock user object as the second argument
   }
 
   console.log('CVEEET!');
