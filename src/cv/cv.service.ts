@@ -50,15 +50,15 @@ export class CvService {
 
   async findOne(id: number, user): Promise<Cv> {
     const whereCondition = user.role !== 'admin' ? { id, user } : { id };
-    const cv = await this.cvRepository.findOne({ where: whereCondition });
+    const cv = await this.cvRepository.findOne({ where: whereCondition,
+      relations: ['user']
+     });
     if (!cv) {
       throw new NotFoundException(`CV #${id} not found`);
     }
     return cv;
   }
   
-  
-
   async update(id: number, updateCvDto: UpdateCvDto, user): Promise<Cv> {
     const cv = await this.findOne(id, user);
     Object.assign(cv, updateCvDto);

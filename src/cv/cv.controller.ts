@@ -10,7 +10,10 @@ import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { User } from 'src/decorators/user.decorator';
 import { AdminGuard } from 'src/auth/guard/admin.guard';
 
-@Controller('cv')
+@Controller({
+  path: 'cv',
+  version: '1',
+})
 export class CvController {
   constructor(private readonly cvService: CvService) {}
 
