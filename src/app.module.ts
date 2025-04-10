@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UploadModule } from './upload/upload.module';
+import { join } from 'path';
 import { CvModule } from './cv/cv.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
@@ -17,6 +20,11 @@ import { DatabaseType, DataSourceOptions } from 'typeorm';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/public',
+    }),
+    UploadModule,
 
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
