@@ -14,4 +14,8 @@ export class CreateUserDto {
 
   @IsString()
   role: string;
+
+  @IsString()
+  cv_path?: string;
+
 }

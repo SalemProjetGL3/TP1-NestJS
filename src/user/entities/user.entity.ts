@@ -26,6 +26,9 @@ export class User {
   })
   role: string;
 
+  @Column({ nullable: true })
+  cv_path: string;
+
   @OneToMany(() => Cv, (cv) => cv.user)
   cvs: Cv[];
 }

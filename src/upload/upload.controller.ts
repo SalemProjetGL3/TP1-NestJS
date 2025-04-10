@@ -1,11 +1,16 @@
-import { Controller, Post, UseInterceptors, UploadedFile, BadRequestException, Get, Param, Res } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, BadRequestException, Get, Param, Res, Req } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { Response } from 'express';
+import { UserService } from 'src/user/user.service';
+import * as fs from 'fs';
 
 @Controller('upload')
 export class UploadController {
+
+    constructor(private userService: UserService) {}
+
     @Post('cv')
     @UseInterceptors(
     FileInterceptor('cv', {
@@ -30,13 +35,25 @@ export class UploadController {
         },
     }),
     )
-    async uploadCv(@UploadedFile() file: Express.Multer.File) {
+    async uploadCv(@UploadedFile() file: Express.Multer.File, @Req() req) {
         if (!file) {
             throw new BadRequestException('File is required');
         }
+        const userId = req.user.username; 
+        const user = await this.userService.findByUsername(userId);
+
+        // Delete old CV if it exists
+        if (user.cv_path) {
+        const oldPath = join(process.cwd(), 'public', 'uploads', user.cv_path);
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        }
+
+        // Save new path in DB
+        await this.userService.update(user.id, { cv_path: file.filename });
+
         return {
-            originalname: file.originalname,
-            filename: file.filename,
+        message: 'CV uploaded and saved!',
+        filename: file.filename,
         };
     }
 
