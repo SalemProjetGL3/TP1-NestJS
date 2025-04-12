@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, Req, ForbiddenException } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, Req, ForbiddenException, Query } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { User } from 'src/decorators/user.decorator';
 import { CreateCvDto } from './dto/create-cv.dto';
@@ -13,13 +13,14 @@ export class CvV2Controller {
   constructor(private readonly cvService: CvService) {}
 
   @Get()
-  findAll(@Req() req: any, searchCvDto: SearchCvDto) {
+  findAll(@Req() req: any, @Query() searchCvDto: SearchCvDto) {
     console.log('User requesting all CVs => userId:', req.user.id);
+    console.log('Search CV DTO:', searchCvDto);
     return this.cvService.findAll(searchCvDto, req.user);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number, @Req() req: any, @User() user) {
+  async findOne(@Param('id') id: number, @Req() req: any) {
     const cv = await this.cvService.findOne(+id, req.user);
     return cv;
   }

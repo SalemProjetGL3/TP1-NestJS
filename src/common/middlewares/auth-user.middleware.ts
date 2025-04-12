@@ -11,7 +11,7 @@ export class AuthUserMiddleware implements NestMiddleware {
       throw new UnauthorizedException('No token provided.');
     }
     try {
-      const decoded = verify(token, 'SECRET_KEY');      
+      const decoded = verify(token, 'SECRET_KEY_SECRET_KEY_SECRET_KEY');      
       const { userId } = decoded as { userId?: number };
       if (!userId) {
         throw new UnauthorizedException('Token invalid: no userId');
