@@ -14,6 +14,8 @@ import { Cv } from './cv/entities/cv.entity';
 import { User } from './user/entities/user.entity';
 import { Skill } from './skill/entities/skill.entity';
 import { DatabaseType, DataSourceOptions } from 'typeorm';
+import { CvHistoryModule } from './cv-history/cv-history.module';
+import { SseModule } from './sse/sse.module';
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { DatabaseType, DataSourceOptions } from 'typeorm';
     UserModule,
     SkillModule,
     AuthModule,
+    CvHistoryModule,
+    SseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
