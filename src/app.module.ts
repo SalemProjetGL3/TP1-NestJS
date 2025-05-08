@@ -16,12 +16,16 @@ import { Skill } from './skill/entities/skill.entity';
 import { DatabaseType, DataSourceOptions } from 'typeorm';
 import { CvHistoryModule } from './cv-history/cv-history.module';
 import { SseModule } from './sse/sse.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { CvHistory } from './cv-history/entities/cv-history.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    EventEmitterModule.forRoot(), 
+
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
       serveRoot: '/public',
@@ -39,7 +43,7 @@ import { SseModule } from './sse/sse.module';
           username: configService.get<string>('DB_USERNAME'),
           password: configService.get<string>('DB_PASSWORD'),
           database: configService.get<string>('DB_NAME'),
-          entities: [Cv, User, Skill],
+          entities: [Cv, User, Skill, CvHistory],
           synchronize: true,
         } as DataSourceOptions;
       },

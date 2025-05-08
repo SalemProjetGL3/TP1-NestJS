@@ -21,12 +21,16 @@
     "seed:users": "ts-node src/commands/user.seeder.ts",
     "seed:skills": "ts-node src/commands/skill.seeder.ts",
     "seed:cvs": "ts-node src/commands/cv.seeder.ts",
-    "seed:db": "ts-node -r tsconfig-paths/register src/commands/db.seeder.ts"
+    "seed:db": "ts-node -r tsconfig-paths/register src/commands/db.seeder.ts",
+    "typeorm": "typeorm",
+    "typeorm:run": "typeorm migration:run",
+    "typeorm:generate": "typeorm migration:generate"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^11.0.5",
@@ -74,6 +78,7 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "typeorm": "^0.3.23",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
   },
