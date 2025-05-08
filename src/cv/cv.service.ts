@@ -1,5 +1,5 @@
 // src/cv/cv.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cv } from './entities/cv.entity';
@@ -25,7 +25,10 @@ export class CvService {
     private cvRepository: Repository<Cv>,
     private readonly eventEmitter: EventEmitter2, // <--- INJECT EventEmitter2
     private readonly cvHistoryService: CvHistoryService, // <--- INJECT CvHistoryService
+    
   ) {}
+
+  private readonly logger = new Logger(CvService.name); // <--- Initialize logger
 
   async create(createCvDto: CreateCvDto, performingUser: UserEntity): Promise<Cv> { // <--- Added UserEntity type
     const newCv = this.cvRepository.create(createCvDto);
@@ -52,6 +55,7 @@ export class CvService {
       timestamp: new Date(),
     };
     this.eventEmitter.emit(CV_CREATED_EVENT, eventPayload);
+    this.logger.debug(`[${CV_CREATED_EVENT}] Event emitted from CvService with payload:`, JSON.stringify(eventPayload)); // <--- ADD THIS LOG
 
     return savedCv;
   }
@@ -111,11 +115,6 @@ export class CvService {
   async update(id: number, updateCvDto: UpdateCvDto, performingUser: UserEntity): Promise<Cv> { // <--- Added UserEntity type
     const cv = await this.findOne(id, performingUser); // findOne includes auth check
 
-    // If only admins can update, ensure this (though controller guard should handle it)
-    // if (performingUser.role !== UserRoleEnum.ADMIN) {
-    //   throw new UnauthorizedException('You do not have permission to update this CV.');
-    // }
-
     Object.assign(cv, updateCvDto);
     const updatedCv = await this.cvRepository.save(cv);
 
@@ -138,6 +137,7 @@ export class CvService {
       timestamp: new Date(),
     };
     this.eventEmitter.emit(CV_UPDATED_EVENT, eventPayload);
+    this.logger.debug(`[${CV_UPDATED_EVENT}] Event emitted from CvService with payload:`, JSON.stringify(eventPayload));
 
     return updatedCv;
   }
@@ -174,5 +174,7 @@ export class CvService {
       timestamp: new Date(),
     };
     this.eventEmitter.emit(CV_DELETED_EVENT, eventPayload);
+    this.logger.debug(`[${CV_DELETED_EVENT}] Event emitted from CvService with payload:`, JSON.stringify(eventPayload)); // <--- ADD THIS LOG
+
   }
 }
