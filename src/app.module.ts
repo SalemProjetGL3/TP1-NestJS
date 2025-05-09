@@ -18,6 +18,8 @@ import { CvHistoryModule } from './cv-history/cv-history.module';
 import { SseModule } from './sse/sse.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { CvHistory } from './cv-history/entities/cv-history.entity';
+import { ChatModule } from './chat/chat.module';
+
 
 @Module({
   imports: [
@@ -56,6 +58,7 @@ import { CvHistory } from './cv-history/entities/cv-history.entity';
     AuthModule,
     CvHistoryModule,
     SseModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -24,7 +24,7 @@ export class CvHistoryService {
       performedBy: performedByUser, // TypeORM should handle setting performedById from this
       performedById: performedByUser.id,
       operationType,
-      details,
+      //details,
       // 'cv' relation can be set if the full Cv entity is passed and you want the relation linked
       // but cvAffectedId is the key for tracking.
     });

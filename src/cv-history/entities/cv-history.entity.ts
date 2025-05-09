@@ -37,6 +37,6 @@ export class CvHistory {
   @Column({ type: 'int', nullable: true }) // Store CV ID separately
   cvAffectedId: number; // Renamed to avoid conflict with relation name 'cv'
 
-  @Column({ type: 'jsonb', nullable: true }) // To store details of the change
-  details?: Record<string, any>; // e.g., { oldData: {...}, newData: {...} } or { deletedData: {...} }
+  //@Column({ type: 'jsonb', nullable: true }) // To store details of the change
+  //details?: Record<string, any>; // e.g., { oldData: {...}, newData: {...} } or { deletedData: {...} }
 }

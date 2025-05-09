@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Chatroom</title>
+    <style>
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        #messages li {
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #messages li:nth-child(odd) {
+            background-color: #f1f1f1;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button, .like-button {
+            margin-left: 5px;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+        .delete-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            margin-left: 10px;
+            border-radius: 5px;
+        }
+        #messageCount {
+            margin: 10px 0;
+        }
+        #typing {
+            color: gray;
+            font-style: italic;
+        }
+        .like-button {
+            color: #e74c3c;
+            font-size: 16px;
+        }
+        .joined {
+            background-color: #e2ffe9;
+            color: #155724;
+        }
+        .left {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chatroom</h1>
+    <p id="messageCount">Messages: 0</p>
+    <ul id="messages"></ul>
+    <p id="typing"></p>
+    <input id="messageInput" type="text" placeholder="Type your message here.."/>
+    <button id="sendButton">Send</button>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script>
+        const socket = io('http://localhost:3001', { query: { username: 'User' + Math.floor(Math.random() * 1000) } });
+        const messagesList = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const messageCount = document.getElementById('messageCount');
+        const typingIndicator = document.getElementById('typing');
+
+        const username = 'User' + Math.floor(Math.random() * 1000);
+        const userId = Math.floor(Math.random() * 1000000);
+
+        function formatTime() {
+            const now = new Date();
+            return now.toLocaleTimeString();
+        }
+
+        function updateMessageCount() {
+            const count = messagesList.childElementCount - 1 ;
+            messageCount.textContent = `Messages: ${count}`;
+        }
+
+        function addMessage(message, className) {
+            const li = document.createElement('li');
+            li.textContent = message;
+            if (className) li.classList.add(className);
+            messagesList.appendChild(li);
+            updateMessageCount();
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        function addChatMessage(message) {
+            const li = document.createElement('li');
+            li.id = `message-${message.id}`;
+            li.innerHTML = `
+                <span>${message.user} (${message.time}): ${message.content}</span>
+                <span>
+                    <button class="like-button" onclick="likeMessage(${message.id})">❤️ ${message.likes || 0}</button>
+                    <button class="delete-button" onclick="deleteMessage(${message.id})">Delete</button>
+                </span>
+            `;
+            messagesList.appendChild(li);
+            updateMessageCount();
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        function likeMessage(id) {
+            socket.emit('likeMessage', { id, userId });
+        }
+
+        function deleteMessage(id) {
+            socket.emit('deleteMessage', id);
+        }
+
+        function showTyping(user) {
+            typingIndicator.textContent = `${user} is typing...`;
+            setTimeout(() => { typingIndicator.textContent = ''; }, 1000);
+        }
+
+        socket.on('connected', (data) => {
+            addMessage(data, 'joined');
+        });
+        socket.on('connection', (data) => {
+            const li = document.createElement('li');
+            li.textContent = data;
+            li.classList.add('joined');
+            messagesList.appendChild(li);
+        });
+        socket.on('disconnected', (data) => {
+            addMessage(data, 'left');
+        });
+        socket.on('disconnection', (data) => {
+            const li = document.createElement('li');
+            li.textContent = data;
+            li.classList.add('left');
+            messagesList.appendChild(li);
+        });
+
+        socket.on('newMessage', (message) => {
+            addChatMessage(message);
+        });
+
+        socket.on('deleteMessage', (id) => {
+            const messageElement = document.getElementById(`message-${id}`);
+            if (messageElement) {
+                messageElement.remove();
+                updateMessageCount();
+            }
+        });
+
+        socket.on('likeUpdated', (data) => {
+            const messageElement = document.querySelector(`#message-${data.id} .like-button`);
+            if (messageElement) {
+                messageElement.textContent = `❤️ ${data.likes}`;
+            }
+        });
+
+        socket.on('userTyping', (user) => {
+            showTyping(user);
+        });
+
+        sendButton.addEventListener('click', () => {
+            const content = messageInput.value;
+            if (content) {
+                socket.emit('sendMessage', { user: username, content, time: formatTime() });
+                messageInput.value = '';
+            }
+        });
+
+        messageInput.addEventListener('input', () => {
+            socket.emit('typing', username);
+        });
+    </script>
+</body>
+</html>
