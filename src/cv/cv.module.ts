@@ -13,7 +13,6 @@ import { AuthUserMiddleware } from '../common/middlewares/auth-user.middleware';
 })
 export class CvModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // On veut que le middleware s’applique seulement sur le CvV2Controller
     consumer.apply(AuthUserMiddleware).forRoutes(CvV2Controller);
   }
 }

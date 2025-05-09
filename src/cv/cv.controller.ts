@@ -9,7 +9,7 @@ import { SearchCvDto } from './dto/search-cv.dto';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { User } from 'src/decorators/user.decorator';
 import { AdminGuard } from 'src/auth/guard/admin.guard';
-
+@UseGuards(JwtAuthGuard)
 @Controller({
   path: 'cv',
   version: '1',
@@ -18,31 +18,29 @@ export class CvController {
   constructor(private readonly cvService: CvService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  
   create(@Body() createCvDto: CreateCvDto, @User() user) : Promise<Cv> {
     return this.cvService.create(createCvDto, user);
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   findAll(@Query() searchCvDto: SearchCvDto, @User() user): Promise<Page<Cv>> {
     return this.cvService.findAll(searchCvDto, user);
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string, @User() user) : Promise<Cv>{
     return this.cvService.findOne(+id, user);
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseGuards(AdminGuard)
   update(@Param('id') id: string, @Body() updateCvDto: UpdateCvDto, @User() user) : Promise<Cv> {
     return this.cvService.update(+id, updateCvDto, user);
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseGuards(AdminGuard)
   remove(@Param('id') id: string, @User() user) : Promise<void> {
     return this.cvService.remove(+id, user);
   }

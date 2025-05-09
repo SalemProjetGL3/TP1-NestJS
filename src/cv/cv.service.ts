@@ -27,7 +27,7 @@ export class CvService {
     if(user.role !== 'admin'){
       query.where('cv.userId = :userId', { userId: user.id });
     }else{
-      query.where('cv.userId IS NOT NULL'); // To avoid null userId for admin
+      query.where('cv.userId IS NOT NULL'); 
     }
     if(searchCvDto.searchString){
       query.andWhere('cv.name LIKE :search OR cv.firstname LIKE :search OR cv.job LIKE :search', 
@@ -49,7 +49,7 @@ export class CvService {
   }
 
   async findOne(id: number, user): Promise<Cv> {
-    const whereCondition = user.role !== 'admin' ? { id, user } : { id };
+    const whereCondition = user.role !== 'admin' ? { id, user } : { id, user: { id: user.id } };
     const cv = await this.cvRepository.findOne({ where: whereCondition,
       relations: ['user']
      });
