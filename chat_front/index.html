@@ -81,14 +81,15 @@
         const username = 'User' + Math.floor(Math.random() * 1000);
         const userId = Math.floor(Math.random() * 1000000);
 
+        let chatMessageCount = 0;
+
         function formatTime() {
             const now = new Date();
             return now.toLocaleTimeString();
         }
 
         function updateMessageCount() {
-            const count = messagesList.childElementCount - 1 ;
-            messageCount.textContent = `Messages: ${count}`;
+            messageCount.textContent = `Messages: ${chatMessageCount}`;
         }
 
         function addMessage(message, className) {
@@ -96,7 +97,6 @@
             li.textContent = message;
             if (className) li.classList.add(className);
             messagesList.appendChild(li);
-            updateMessageCount();
             window.scrollTo(0, document.body.scrollHeight);
         }
 
@@ -111,6 +111,7 @@
                 </span>
             `;
             messagesList.appendChild(li);
+            chatMessageCount++; // Only increase the count for chat messages
             updateMessageCount();
             window.scrollTo(0, document.body.scrollHeight);
         }
@@ -128,6 +129,7 @@
             setTimeout(() => { typingIndicator.textContent = ''; }, 1000);
         }
 
+        // Handle connection event
         socket.on('connected', (data) => {
             addMessage(data, 'joined');
         });
@@ -147,18 +149,22 @@
             messagesList.appendChild(li);
         });
 
+        // Handle new message event
         socket.on('newMessage', (message) => {
             addChatMessage(message);
         });
 
+        // Handle delete message event
         socket.on('deleteMessage', (id) => {
             const messageElement = document.getElementById(`message-${id}`);
             if (messageElement) {
                 messageElement.remove();
+                chatMessageCount--; // Decrease count when a chat message is deleted
                 updateMessageCount();
             }
         });
 
+        // Handle like update event
         socket.on('likeUpdated', (data) => {
             const messageElement = document.querySelector(`#message-${data.id} .like-button`);
             if (messageElement) {
@@ -166,10 +172,12 @@
             }
         });
 
+        // Handle typing indication
         socket.on('userTyping', (user) => {
             showTyping(user);
         });
 
+        // Send a message
         sendButton.addEventListener('click', () => {
             const content = messageInput.value;
             if (content) {
@@ -178,9 +186,11 @@
             }
         });
 
+        // Notify when typing
         messageInput.addEventListener('input', () => {
             socket.emit('typing', username);
         });
     </script>
+
 </body>
 </html>
